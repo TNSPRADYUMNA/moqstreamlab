@@ -43,7 +43,26 @@ target/release/moqstreamlab subscribe --ca work/ca.pem --out subscriber.jsonl --
 
 The publisher waits 2.5 seconds before producing media so clients can subscribe. Both programs accept `--track`. The frame count, track name, frame size and timeouts have explicit bounds. The subscriber refuses to overwrite an existing output file. No reconnect loop hides a connection failure. A timeout returns a failed exit status and retains the partial measurement log.
 
-## Measurement definitions
+## Verified results
+
+The hosted Linux run delivered **2,430 of 2,430 JPEG objects** across 18 publisher runs and 27 subscriber logs. All subscriber processes exited successfully. No receive gap exceeded the configured 100 ms interruption threshold. The separate Docker clean-network experiment also passed.
+
+| Loopback profile | Subscribers | Mean subscriber p95 delivery latency | Mean payload goodput |
+| --- | ---: | ---: | ---: |
+| Clean | 1 | 0.164 ms | 0.944 Mbps |
+| Clean | 2 | 0.230 ms | 0.944 Mbps |
+| 25 ± 5 ms added delay | 1 | 29.783 ms | 0.945 Mbps |
+| 25 ± 5 ms added delay | 2 | 29.612 ms | 0.945 Mbps |
+| 15 ± 3 ms delay with 1% packet loss | 1 | 17.784 ms | 0.946 Mbps |
+| 15 ± 3 ms delay with 1% packet loss | 2 | 21.527 ms | 0.942 Mbps |
+
+Each cell averages three publisher repetitions, including each subscriber separately. The full delivery ratio under 1% packet loss describes this workload over a reliable QUIC transport. It does not establish a general loss-free live-media guarantee. Startup delay ranged from about 2.50 to 2.53 seconds, dominated by the deliberate 2.5-second publisher lead-in.
+
+[Raw per-subscriber metrics](results/summary.json) · [Aggregated metrics](results/averages.csv) · [Passing verification](https://github.com/TNSPRADYUMNA/moqstreamlab/actions/runs/45358164442)
+
+![Delivery latency and ratio across network profiles](results/delivery.png)
+
+## Metric interpretation
 
 - **Application delivery latency** is receiver wall-clock time minus the timestamp immediately before publication. Both processes use the same host clock in this benchmark.
 - **Startup delay** runs from subscriber process setup to its first delivered object. It includes the deliberate publisher lead-in.
