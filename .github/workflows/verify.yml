@@ -1,0 +1,29 @@
+name: Verify
+on: [push, pull_request]
+jobs:
+  quic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg iproute2
+      - run: python -m pip install -r requirements.txt
+      - run: cargo test
+      - run: cargo build --release
+      - run: python -m pytest -q
+      - run: python lab.py --netem
+      - run: python analyze.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: measured-delivery
+          path: |
+            results/
+            work/*/*.jsonl
+            work/*/*.err
+            Cargo.lock

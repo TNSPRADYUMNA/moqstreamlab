@@ -1,0 +1,16 @@
+[package]
+name = "moqstreamlab"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[dependencies]
+anyhow = "1"
+bytes = "1"
+clap = { version = "4", features = ["derive"] }
+moq-lite = "=0.14.0"
+moq-native = { version = "=0.13.0", default-features = false, features = ["quinn", "ring"] }
+serde_json = "1"
+sha2 = "0.10"
+tokio = { version = "1", features = ["full"] }
+url = "2"
