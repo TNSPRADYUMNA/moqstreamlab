@@ -44,7 +44,7 @@ def prepare(work):
                "-addext","basicConstraints=critical,CA:TRUE"])
         check(["openssl","req","-newkey","rsa:2048","-nodes","-keyout",str(key),
                "-out",str(csr),"-subj","/CN=localhost"])
-        extensions.write_text("subjectAltName=DNS:localhost\nbasicConstraints=critical,CA:FALSE\n"
+        extensions.write_text("subjectAltName=DNS:localhost,IP:127.0.0.1\nbasicConstraints=critical,CA:FALSE\n"
                               "keyUsage=critical,digitalSignature,keyEncipherment\nextendedKeyUsage=serverAuth\n")
         check(["openssl","x509","-req","-in",str(csr),"-CA",str(ca),"-CAkey",str(ca_key),
                "-CAcreateserial","-out",str(cert),"-days","2","-extfile",str(extensions)])

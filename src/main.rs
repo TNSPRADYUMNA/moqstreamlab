@@ -32,7 +32,7 @@ enum Mode {
         track: String,
     },
     Subscribe {
-        #[arg(long, default_value = "https://localhost:4433/")]
+        #[arg(long, default_value = "https://127.0.0.1:4433/")]
         url: Url,
         #[arg(long)]
         ca: PathBuf,
